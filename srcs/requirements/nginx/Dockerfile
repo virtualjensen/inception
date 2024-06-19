@@ -1,0 +1,28 @@
+FROM debian:bullseye
+
+
+RUN apt-get update
+RUN apt-get install nginx -y
+
+RUN apt-get install openssl -y
+# RUN apt-get install systemctl -y
+
+RUN rm -rf /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
+COPY ["./conf/my_nginx.conf", "/etc/nginx/nginx.conf"]
+
+#generates self-signed ssl certificate and private key and stores in respective /etc/ directory
+RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/private/key.pem -out /etc/ssl/certs/cert.pem -sha256 -days 3650 -nodes -subj "/C=AE/ST=Abu Dhabi/L=Abu Dhabi/O=42AD/OU=42AD/CN=42AD"
+
+#runs nginx
+ENTRYPOINT usr/sbin/nginx -g "daemon off;"
+
+#copies the config file and puts it in the /etc/ respective file
+# apt-get update (needed before installing nginx)
+# apt-get upgrade
+# apt-get install nginx -y (to override prompts to yes)
+
+# docker build -t nginx ./ 
+
+# docker run -it nginx 
+
+# docker exec -it *contained ID* /bin/bash

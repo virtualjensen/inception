@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  nginx_service:
+    container_name: "nginx"
+    build: ./requirements/nginx
+    ports:
+      - "80:80"
+      - "443:443"
