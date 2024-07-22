@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   nginx_service:
     container_name: "nginx"
@@ -7,3 +6,30 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - wp_volume:/var/www/html
+    depends_on:
+      - "wordpress_service"
+    init: true
+
+  wordpress_service:
+    container_name: "wordpress"
+    build: ./requirements/wordpress
+    ports:
+      - 9000:9000
+    volumes:
+      - wp_volume:/var/www/html
+    init: true
+  
+
+    
+volumes:
+    wp_volume:
+      driver: local
+      driver_opts:
+        type: none
+        o: bind
+
+
+
+    

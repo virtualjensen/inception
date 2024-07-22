@@ -1,17 +1,17 @@
 FROM debian:bullseye
 
+RUN apt update
+RUN apt install nginx openssl -y --no-install-recommends
 
-RUN apt-get update
-RUN apt-get install nginx -y
-
-RUN apt-get install openssl -y
 # RUN apt-get install systemctl -y
 
 RUN rm -rf /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
 COPY ["./conf/my_nginx.conf", "/etc/nginx/nginx.conf"]
 
+COPY ["./tools/index.html", "/var/www/html/."]
 #generates self-signed ssl certificate and private key and stores in respective /etc/ directory
 RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/private/key.pem -out /etc/ssl/certs/cert.pem -sha256 -days 3650 -nodes -subj "/C=AE/ST=Abu Dhabi/L=Abu Dhabi/O=42AD/OU=42AD/CN=42AD"
+
 
 #runs nginx
 ENTRYPOINT usr/sbin/nginx -g "daemon off;"
