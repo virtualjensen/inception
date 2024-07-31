@@ -7,17 +7,18 @@ FROM debian:bullseye
 #  3. sudo -u ww-data user create 
 # and then run the php-fpm server
 
-RUN apt-get update -y --no-install-recommends
+RUN apt update -y --no-install-recommends
 
 # installing all dependencies
-RUN apt-get install  -y --no-install-recommends\
+RUN apt install  -y --no-install-recommends\
     php \
     php-fpm \
     php-mysql \
     mariadb-client \
     wget \
     ca-certificates \
-    curl
+    curl \
+    sudo 
 
 # # copying configuration file into docker
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
@@ -38,11 +39,11 @@ RUN mkdir -p /run/php/
 
 EXPOSE 9000
 
-COPY tools/setup.sh /usr/local/bin/setup.sh
+COPY tools/wp_setup.sh /usr/local/bin/setup.sh
 RUN chmod +x /usr/local/bin/setup.sh
 # RUN /bin/bash /usr/local/bin/setup.sh
 
-ENTRYPOINT "./usr/local/bin/setup.sh"
+ENTRYPOINT "./usr/local/bin/wp_setup.sh"
 
 
 

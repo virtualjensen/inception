@@ -1,34 +1,85 @@
 version: "3.8"
+
+networks:
+  test:
+    name: test_net
+  
 services:
   nginx_service:
     container_name: "nginx"
     build: ./requirements/nginx
     ports:
-      - "80:80"
       - "443:443"
+    environment:
+      - INTRA_LOGIN
+      - DOMAIN_NAME
     volumes:
       - wp_volume:/var/www/html
     depends_on:
       - "wordpress_service"
+    networks:
+      - "test"
     init: true
+    restart: on-failure
 
   wordpress_service:
     container_name: "wordpress"
     build: ./requirements/wordpress
-    ports:
-      - 9000:9000
+    expose:
+      - 9000
+    environment:
+      - DB_NAME
+      - DB_USER
+      - DB_PASS
+      - DB_PRE
+      - DOMAIN_NAME
+      - WP_TITLE
+      - WP_USER
+      - WP_PASS
+      - WP_EMAIL
+      - WP_OTHER_USER
+      - WP_OTHER_EMAIL
+      - WP_OTHER_PASS
     volumes:
       - wp_volume:/var/www/html
+    depends_on:
+      - "mariadb_service"
+    networks:
+      - "test"
     init: true
+
+  mariadb_service:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    expose:
+      - 3306
+    environment:
+      - DB_NAME
+      - DB_USER
+      - DB_PASS
+      - DB_ROOT
+    networks:
+      - "test"
+    volumes:
+      - db_volume:/var/lib/mysql
+    restart: on-failure
   
 
     
 volumes:
-    wp_volume:
-      driver: local
-      driver_opts:
-        type: none
-        o: bind
+  wp_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /
+      o: bind
+  db_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /
+      o: bind
+
 
 
 
