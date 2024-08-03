@@ -18,7 +18,7 @@ RUN apt install  -y --no-install-recommends\
     wget \
     ca-certificates \
     curl \
-    sudo 
+    sudo
 
 # # copying configuration file into docker
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
@@ -39,11 +39,13 @@ RUN mkdir -p /run/php/
 
 EXPOSE 9000
 
-COPY tools/wp_setup.sh /usr/local/bin/setup.sh
-RUN chmod +x /usr/local/bin/setup.sh
-# RUN /bin/bash /usr/local/bin/setup.sh
+COPY /tools/setup.sh /var/www/html
 
-ENTRYPOINT "./usr/local/bin/wp_setup.sh"
+RUN chmod +x /usr/local/bin/setup.sh
+
+RUN ./usr/local/bin/setup.sh
+
+ENTRYPOINT "php-fpm7.4 -FR"
 
 
 

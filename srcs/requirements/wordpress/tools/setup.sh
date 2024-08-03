@@ -23,7 +23,7 @@ sudo -u www-data wp user create "$WP_OTHER_USER" $WP_OTHER_EMAIL \
     --role=author \
     --allow-root
 
-php-fpm7.4 -FR
+
 
 
 
