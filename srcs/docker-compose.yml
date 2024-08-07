@@ -10,6 +10,8 @@ services:
     build: ./requirements/nginx
     ports:
       - "443:443"
+    env_file:
+      - .env
     environment:
       - INTRA_LOGIN
       - DOMAIN_NAME
@@ -27,6 +29,8 @@ services:
     build: ./requirements/wordpress
     expose:
       - 9000
+    env_file:
+      - .env
     environment:
       - DB_NAME
       - DB_USER
@@ -53,6 +57,8 @@ services:
     container_name: mariadb
     expose:
       - 3306
+    env_file:
+      - .env
     environment:
       - DB_NAME
       - DB_USER

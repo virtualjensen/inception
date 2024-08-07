@@ -2,6 +2,8 @@
 
 chmod 755 -R /var/www/html
 
+cd /var/www/html
+
 wp core download
 
 sudo -u www-data wp config create --dbname=$DB_NAME \
