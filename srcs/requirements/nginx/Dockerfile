@@ -9,7 +9,7 @@ COPY ["./conf/my_nginx.conf", "/etc/nginx/nginx.conf"]
 
 COPY ["./tools/index.html", "/var/www/html/."]
 #generates self-signed ssl certificate and private key and stores in respective /etc/ directory
-RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/private/key.pem -out /etc/ssl/certs/cert.pem -sha256 -days 3650 -nodes -subj "/C=AE/ST=Abu Dhabi/L=Abu Dhabi/O=42/OU=Abu Dhabi/CN=${INTRA_LOGIN}"
+RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/private/key.pem -out /etc/ssl/certs/cert.pem -sha256 -days 3650 -nodes -subj "/C=AE/ST=Abu Dhabi/L=Abu Dhabi/O=42/OU=Abu Dhabi/CN=${DOMAIN_NAME}"
 
 
 #runs nginx

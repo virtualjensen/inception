@@ -1,90 +1,94 @@
 version: "3.8"
-
-networks:
-  test:
-    name: test_net
   
 services:
   nginx_service:
     container_name: "nginx"
-    build: ./requirements/nginx
+    build:
+      context: ./requirements/nginx
+      args:
+        INTRA_LOGIN: ${INTRA_LOGIN}
+        DOMAIN_NAME: ${DOMAIN_NAME}
     ports:
-      - "443:443"
-    env_file:
-      - .env
-    environment:
-      - INTRA_LOGIN
-      - DOMAIN_NAME
+      - 443:443
+      - 80:80
+    networks:
+      - inception
     volumes:
       - wp_volume:/var/www/html
-    depends_on:
-      - "wordpress_service"
-    networks:
-      - "test"
+    env_file:
+      - .env
     init: true
     restart: on-failure
 
   wordpress_service:
-    container_name: "wordpress"
-    build: ./requirements/wordpress
+    container_name: wordpress
+    build:
+      context: ./requirements/wordpress
+      args:
+        DB_NAME: ${DB_NAME}
+        DB_USER: ${DB_USER}
+        DB_PASS: ${DB_PASS}
+        DB_PRE: ${DB_PRE}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+        WP_TITLE: ${WP_TITLE}
+        WP_USER: ${WP_USER}
+        WP_PASS: ${WP_PASS}
+        WP_EMAIL: ${WP_EMAIL}
+        WP_OTHER_USER: ${WP_OTHER_USER}
+        WP_OTHER_EMAIL: ${WP_OTHER_EMAIL}
+        WP_OTHER_PASS: ${WP_OTHER_PASS}
     expose:
       - 9000
     env_file:
       - .env
-    environment:
-      - DB_NAME
-      - DB_USER
-      - DB_PASS
-      - DB_PRE
-      - DOMAIN_NAME
-      - WP_TITLE
-      - WP_USER
-      - WP_PASS
-      - WP_EMAIL
-      - WP_OTHER_USER
-      - WP_OTHER_EMAIL
-      - WP_OTHER_PASS
     volumes:
       - wp_volume:/var/www/html
     depends_on:
-      - "mariadb_service"
+      - mariadb_service
     networks:
-      - "test"
+      - inception
     init: true
+    restart: on-failure
 
   mariadb_service:
-    build: ./requirements/mariadb
+    build: 
+      context: ./requirements/mariadb
+      args: 
+         DB_NAME: ${DB_NAME}
+         DB_USER: ${DB_USER}
+         DB_PASS: ${DB_PASS}
+         DB_ROOT: ${DB_ROOT}
+         DB_ROOT_PASS: ${DB_ROOT_PASS}
+         DB_HOST: ${DB_HOST}
+         DP_PRE: ${DP_PRE}
     container_name: mariadb
     expose:
       - 3306
-    env_file:
-      - .env
-    environment:
-      - DB_NAME
-      - DB_USER
-      - DB_PASS
-      - DB_ROOT
     networks:
-      - "test"
+      - inception
     volumes:
       - db_volume:/var/lib/mysql
+    env_file:
+      - .env
     restart: on-failure
-  
-
     
 volumes:
   wp_volume:
     driver: local
     driver_opts:
       type: none
-      device: /
+      device: /home/jebucoy/inception_data/wp
       o: bind
   db_volume:
     driver: local
     driver_opts:
       type: none
-      device: /
+      device: /home/jebucoy/inception_data/db
       o: bind
+
+networks:
+  inception:
+    driver: bridge
 
 
 

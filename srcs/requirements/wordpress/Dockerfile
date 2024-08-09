@@ -39,11 +39,11 @@ RUN mkdir -p /run/php/
 
 EXPOSE 9000
 
-COPY /tools/setup.sh /var/www/html
+COPY /tools/setup.sh /setup.sh
 
-RUN chmod +x /usr/local/bin/setup.sh
+RUN chmod +x /setup.sh
 
-RUN ./usr/local/bin/setup.sh
+RUN /setup.sh
 
 ENTRYPOINT "php-fpm7.4 -FR"
 
