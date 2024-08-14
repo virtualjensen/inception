@@ -6,6 +6,18 @@ FROM debian:bullseye
 #  2. sudo -u www-data core install
 #  3. sudo -u ww-data user create 
 # and then run the php-fpm server
+ARG DB_NAME
+ARG DB_USER
+ARG DB_PASS
+ARG DB_PRE
+ARG DOMAIN_NAME
+ARG WP_TITLE
+ARG WP_USER
+ARG WP_PASS
+ARG WP_EMAIL
+ARG WP_OTHER_USER
+ARG WP_OTHER_EMAIL
+ARG WP_OTHER_PASS
 
 RUN apt update -y --no-install-recommends
 
@@ -19,6 +31,7 @@ RUN apt install  -y --no-install-recommends\
     ca-certificates \
     curl \
     sudo
+
 
 # # copying configuration file into docker
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
@@ -45,10 +58,6 @@ RUN chmod +x /setup.sh
 
 RUN /setup.sh
 
-ENTRYPOINT "php-fpm7.4 -FR"
+ENTRYPOINT "php-fpm7.4"
 
-
-
-
-
-
+# ENTRYPOINT "/bin/bash" 

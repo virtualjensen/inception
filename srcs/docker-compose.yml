@@ -9,15 +9,16 @@ services:
         INTRA_LOGIN: ${INTRA_LOGIN}
         DOMAIN_NAME: ${DOMAIN_NAME}
     ports:
-      - 443:443
-      - 80:80
-    networks:
-      - inception
+      - "443:443"
     volumes:
-      - wp_volume:/var/www/html
+      - wp_data:/var/www/html
     env_file:
       - .env
+    depends_on:
+      - wordpress_service
     init: true
+    networks:
+      - inception
     restart: on-failure
 
   wordpress_service:
@@ -42,12 +43,12 @@ services:
     env_file:
       - .env
     volumes:
-      - wp_volume:/var/www/html
+      - wp_data:/var/www/html
     depends_on:
       - mariadb_service
+    init: true
     networks:
       - inception
-    init: true
     restart: on-failure
 
   mariadb_service:
@@ -62,35 +63,33 @@ services:
          DB_HOST: ${DB_HOST}
          DP_PRE: ${DP_PRE}
     container_name: mariadb
+    command: sh -c "echo 'echo "127.0.0.1 jebucoy.42.fr" >> /etc/hosts'"
     expose:
       - 3306
-    networks:
-      - inception
     volumes:
-      - db_volume:/var/lib/mysql
+      - db_data:/var/lib/mysql
     env_file:
       - .env
+    networks:
+      - inception
     restart: on-failure
     
 volumes:
-  wp_volume:
+  wp_data:
+    name: wordpress_data
     driver: local
     driver_opts:
       type: none
-      device: /home/jebucoy/inception_data/wp
+      device: /home/jebucoy/inception_mount/wp
       o: bind
-  db_volume:
+  db_data:
+    name: db_data
     driver: local
     driver_opts:
       type: none
-      device: /home/jebucoy/inception_data/db
+      device: /home/jebucoy/inception_mount/db
       o: bind
 
 networks:
   inception:
     driver: bridge
-
-
-
-
-    
