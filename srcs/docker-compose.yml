@@ -1,8 +1,9 @@
 version: "3.8"
   
 services:
-  nginx_service:
+  nginx:
     container_name: "nginx"
+    hostname: nginx
     build:
       context: ./requirements/nginx
       args:
@@ -15,14 +16,16 @@ services:
     env_file:
       - .env
     depends_on:
-      - wordpress_service
+      - wordpress
+      - mariadb
     init: true
     networks:
       - inception
     restart: on-failure
 
-  wordpress_service:
+  wordpress:
     container_name: wordpress
+    hostname: wordpress
     build:
       context: ./requirements/wordpress
       args:
@@ -38,6 +41,8 @@ services:
         WP_OTHER_USER: ${WP_OTHER_USER}
         WP_OTHER_EMAIL: ${WP_OTHER_EMAIL}
         WP_OTHER_PASS: ${WP_OTHER_PASS}
+        DB_ROOT_PASS: ${DB_ROOT_PASS}
+
     expose:
       - 9000
     env_file:
@@ -45,13 +50,15 @@ services:
     volumes:
       - wp_data:/var/www/html
     depends_on:
-      - mariadb_service
+      - mariadb
     init: true
     networks:
       - inception
     restart: on-failure
 
-  mariadb_service:
+  mariadb:
+    container_name: mariadb
+    hostname: mariadb
     build: 
       context: ./requirements/mariadb
       args: 
@@ -61,9 +68,7 @@ services:
          DB_ROOT: ${DB_ROOT}
          DB_ROOT_PASS: ${DB_ROOT_PASS}
          DB_HOST: ${DB_HOST}
-         DP_PRE: ${DP_PRE}
-    container_name: mariadb
-    command: sh -c "echo 'echo "127.0.0.1 jebucoy.42.fr" >> /etc/hosts'"
+         DB_PRE: ${DB_PRE}
     expose:
       - 3306
     volumes:
@@ -76,7 +81,7 @@ services:
     
 volumes:
   wp_data:
-    name: wordpress_data
+    name: wp_data
     driver: local
     driver_opts:
       type: none

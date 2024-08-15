@@ -23,7 +23,6 @@ RUN apt update -y --no-install-recommends
 
 # installing all dependencies
 RUN apt install  -y --no-install-recommends\
-    php \
     php-fpm \
     php-mysql \
     mariadb-client \
@@ -32,8 +31,7 @@ RUN apt install  -y --no-install-recommends\
     curl \
     sudo
 
-
-# # copying configuration file into docker
+# copying configuration file into docker
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 #install wordpress
@@ -58,6 +56,6 @@ RUN chmod +x /setup.sh
 
 RUN /setup.sh
 
-ENTRYPOINT "php-fpm7.4"
+ENTRYPOINT ["php-fpm7.4", "-F", "-R"]
 
-# ENTRYPOINT "/bin/bash" 
+# ENTRYPOINT ["tail", "-f"]
