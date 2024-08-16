@@ -46,16 +46,24 @@ RUN wget --no-check-certificate https://raw.githubusercontent.com/wp-cli/builds/
 	&& chmod 777 wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp
 
+RUN chmod -R 777 /var/www/html \
+	&& chown -R www-data:www-data /var/www/html
+
+RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.4/fpm/php.ini
+RUN sed -i "s/;date.timezone =/date.timezone = Asia\/Dubai/" /etc/php/7.4/fpm/php.ini
+
 RUN mkdir -p /run/php/
+
+WORKDIR /var/www/html
+
+COPY /tools/setup.sh /var/www/html
+
+RUN chmod +x /var/www/html/setup.sh
+
+# RUN /setup.sh
 
 EXPOSE 9000
 
-COPY /tools/setup.sh /setup.sh
+ENTRYPOINT ["/var/www/html/setup.sh"]
 
-RUN chmod +x /setup.sh
-
-RUN /setup.sh
-
-ENTRYPOINT ["php-fpm7.4", "-F", "-R"]
-
-# ENTRYPOINT ["tail", "-f"]
+# ENTRYPOINT ["bash"]

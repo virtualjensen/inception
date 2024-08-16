@@ -1,21 +1,23 @@
-chmod 777 -R /var/www/html
-cd /var/www/html/
+#!/bin/bash
 
-wp --allow-root core download --force
+sudo -u www-data wp config create --dbname=$DB_NAME \
+	--dbuser=$DB_USER \
+	--dbpass=$DB_PASS \
+	--dbhost=$DB_HOST \
+	--dbprefix=$DB_PRE \
+	--allow-root
 
-mv wp-config-sample.php wp-config.php
+sudo -u www-data wp core install --url=https://jebucoy.42.fr \
+	--title="$WP_TITLE" \
+	--admin_user=$WP_USER \
+	--admin_password=$WP_PASS \
+	--admin_email=$WP_EMAIL \
+	--allow-root
 
-sed -i "s/'database_name_here'/'$DB_NAME'/g" wp-config.php
-sed -i "s/'username_here'/'$DB_USER'/g" wp-config.php
-sed -i "s/'password_here'/'$DB_PASS'/g" wp-config.php
-sed -i "s/'localhost'/'mariadb:3306'/g" wp-config.php
+sudo -u www-data wp user create "$WP_OTHER_USER" $WP_OTHER_EMAIL \
+	--user_pass=$WP_OTHER_PASS \
+	--role=author \
+	--allow-root
 
-wp --allow-root --path=/var/www/html core install \
-	--url='jebucoy.42.fr' --title='WordPress' \
-	--skip-email --admin_email="${WP_EMAIL}" \
-	--admin_user="$WP_USER" \
-	--admin_password="$WP_PASS"
+php-fpm7.4 -FR
 
-wp --allow-root user create $WP_OTHER_USER "${WP_OTHER_MAIL}" --user_pass=$WP_OTHER_PASS --role=editor
-
-chmod -R 777 /var/www/html
