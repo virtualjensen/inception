@@ -85,14 +85,14 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/jebucoy/inception_mount/wp
+      device: /home/jebucoy/data/wp
       o: bind
   db_data:
     name: db_data
     driver: local
     driver_opts:
       type: none
-      device: /home/jebucoy/inception_mount/db
+      device: /home/jebucoy/data/db
       o: bind
 
 networks:

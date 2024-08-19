@@ -4,8 +4,8 @@ build:
 	docker compose -f srcs/docker-compose.yml up -d --build
 
 up:
-	mkdir -p /home/${USER}/data/mariadb
-	mkdir -p /home/${USER}/data/wordpress
+	mkdir -p /home/${USER}/data/db
+	mkdir -p /home/${USER}/data/wp
 	docker compose -f srcs/docker-compose.yml up -d
 
 down:
